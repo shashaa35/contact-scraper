@@ -46,7 +46,7 @@ class Controller:
         self.max_results = max_results
         self.website_name = website_name
     
-        logging.info("Controller initilized...")
+        logging.info(f"Scrapping for {starting_urls}")
         
 
     def scrape(self):
@@ -65,6 +65,7 @@ class Controller:
         
         runner = CrawlerRunner(self.settings)
         configure_logging()
+        logging.getLogger('scrapy').propagate = False
 
 
 
@@ -72,9 +73,9 @@ class Controller:
         def crawl(starting_urls, website_name):
             for starting_url in starting_urls:
                 ext = tldextract.extract(starting_url)
-                logging.info(ext)
+                # logging.info(ext)
                 root = '.'.join(ext[1:])
-                logging.info(root)
+                # logging.info(root)
                 # break
                 try:
                     

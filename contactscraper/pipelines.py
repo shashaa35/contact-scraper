@@ -20,7 +20,7 @@ class ContactscraperPipeline:
         
         output = [{'url' : url, 'emails' : list(contact['emails']), 'numbers' : list(contact['numbers'])} for url, contact in self.url_map.items()]
 
-        self.file.write(json.dumps(output, indent=2)))
+        self.file.write(json.dumps(output, indent=2))
             
         self.file.close()
 

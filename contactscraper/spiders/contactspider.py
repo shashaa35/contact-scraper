@@ -47,7 +47,6 @@ class ContactSpider(CrawlSpider):
         self.scrape_numbers = scrape_numbers
         self.total_results = 0
         self.max_results = max_results
-        logging.info(self.max_results)
         
         super().__init__(**kwargs)
         
@@ -101,7 +100,9 @@ class ContactSpider(CrawlSpider):
                 self.seen_urls.add(response.url)
                 yield contact_info
             
-            logging.info(f"found {self.total_results}/{self.max_results} results")
+            if len(contact_info['emails'])>0:
+                logging.info(f"Found {contact_info['emails']} on {response.url}")
+            # logging.info(f"found {self.total_results}/{self.max_results} results")
             if self.total_results >= self.max_results:
                 raise CloseSpider('Reached max results')
         
