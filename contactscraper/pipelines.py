@@ -11,7 +11,7 @@ from scrapy.exceptions import DropItem, CloseSpider
 class ContactscraperPipeline:
 
     def open_spider(self, spider):
-        self.file = open('output.json', 'w')
+        self.file = open(f"{spider.website_name}.json", 'w+')
         self.emails = set()
         self.numbers = set()
         self.url_map = {}

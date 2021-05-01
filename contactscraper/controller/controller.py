@@ -13,6 +13,7 @@ from contactscraper.spiders.contactspider import ContactSpider
 import re
 import logging
 import os
+from os import path
 from datetime import datetime, timezone, timedelta
 import sys
 
@@ -23,12 +24,12 @@ from twisted.internet import reactor, defer
 import tldextract
 
 class Controller:
-    def __init__(self, starting_urls, scrape_numbers=True, scrape_emails=True, region="US", max_results=False):
+    def __init__(self, starting_urls, scrape_numbers=True, scrape_emails=True, region="US", max_results=False, website_name='output.json'):
 
         
         #Init logging
         start_time = datetime.now().timestamp()
-        logging.basicConfig(filename=f'.\logs\{start_time}.log',level=logging.INFO)
+        logging.basicConfig(filename=path.join('logs',f'{start_time}.log'),level=logging.INFO)
         logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 
         #Init project with scrapy settings
@@ -43,6 +44,7 @@ class Controller:
         self.scrape_emails = scrape_emails
         self.region = region
         self.max_results = max_results
+        self.website_name = website_name
     
         logging.info("Controller initilized...")
         
@@ -67,10 +69,13 @@ class Controller:
 
 
         @defer.inlineCallbacks
-        def crawl(starting_urls):
+        def crawl(starting_urls, website_name):
             for starting_url in starting_urls:
                 ext = tldextract.extract(starting_url)
-                root = '.'.join(ext[2:])
+                logging.info(ext)
+                root = '.'.join(ext[1:])
+                logging.info(root)
+                # break
                 try:
                     
                     yield runner.crawl(ContactSpider, 
@@ -80,13 +85,14 @@ class Controller:
                                         scrape_numbers=self.scrape_numbers,
                                         start_urls=[starting_url], 
                                         allowed_domains=[root],
-                                        max_results=self.max_results
+                                        max_results=self.max_results,
+                                        website_name=website_name
                                         )                   
                 except Exception as e:
                     logging.warning(f"FATAL: NEW MAIL-SPIDER FAILED TO LAUNCH\n\t{str(e)}")
             reactor.stop()
         
         
-        crawl(self.starting_urls)
+        crawl(self.starting_urls, self.website_name)
 
         reactor.run() 
