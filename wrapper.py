@@ -8,7 +8,7 @@ file_name = sys.argv[1]
 max_results = sys.argv[2]
 start = time()
 rows = []
-with open(filename, encoding='utf-8') as raw_output:
+with open(file_name, encoding='utf-8') as raw_output:
     data = raw_output.read()
     rows = data.split('\n')
 
